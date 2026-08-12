@@ -1,0 +1,19 @@
+{
+  "name": "plantopia-farms",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "backend",
+    "apps/web/customer",
+    "apps/web/admin",
+    "apps/mobile",
+    "packages/types"
+  ],
+  "scripts": {
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:customer": "npm --workspace @plantopia/customer run dev",
+    "dev:admin": "npm --workspace @plantopia/admin run dev",
+    "dev:mobile": "npm --workspace @plantopia/mobile run start",
+    "start:backend": "npm --workspace backend run start"
+  }
+}
