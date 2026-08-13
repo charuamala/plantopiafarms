@@ -4,7 +4,11 @@ export default function ContactPage() {
   return (
     <main className="page-shell">
       <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
+        <Link href="/">
+          <a className="brand" aria-label="Plantopia Farms home">
+            <img src="/logo.svg" alt="Plantopia Farms" />
+          </a>
+        </Link>
         <nav className="nav">
           <Link href="/">Home</Link>
           <Link href="/shop">Shop</Link>
@@ -24,17 +28,23 @@ export default function ContactPage() {
 
       <section className="contact-grid">
         <div className="contact-card">
-          <h2>Customer care</h2>
-          <p>hello@plantopiafarms.com</p>
-          <p>+91 98765 43210</p>
+          <h2>Business contact</h2>
+          <p>Benitto Prabu F</p>
+          <p>Business Development Manager</p>
+          <p>+91 74004 55538</p>
+          <p>+91 97909 65058</p>
+          <p>benitto@plantopiafarms.com</p>
         </div>
         <div className="contact-card">
           <h2>Visit our farm</h2>
           <p>Plantopia Farms</p>
-          <p>Chennai, Tamil Nadu, India</p>
+          <p>
+            1/271 Kookal, Naavalorai Masakkal, Kotagiri, The Nilgiris, TN 643217
+          </p>
         </div>
         <div className="contact-card">
-          <h2>Social</h2>
+          <h2>Website</h2>
+          <p>www.plantopiafarms.com</p>
           <p>Instagram: @plantopiafarms</p>
           <p>Facebook: Plantopia Farms</p>
         </div>
@@ -42,7 +52,13 @@ export default function ContactPage() {
 
       <footer className="site-footer compact">
         <div className="footer-inner">
-          <div className="footer-brand">Plantopia Farms</div>
+          <div className="footer-brand">
+            <Link href="/">
+              <a aria-label="Plantopia Farms home">
+                <img src="/logo.svg" alt="Plantopia Farms" />
+              </a>
+            </Link>
+          </div>
           <div className="footer-links">
             <Link href="/">Home</Link>
             <Link href="/shop">Shop</Link>

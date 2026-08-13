@@ -10,6 +10,41 @@ const bannerOrder: BerryKey[] = [
   "raspberry",
 ];
 
+const offerCards = [
+  {
+    title: "Strawberry Summer Set",
+    subtitle: "Sweet strawberry bundles for smoothies, jams, and snacks.",
+    label: "Best seller",
+    button: "Shop strawberries",
+    image: berryCatalog.strawberry.image,
+    link: "/shop?berry=strawberry",
+  },
+  {
+    title: "Blueberry Antioxidant Pack",
+    subtitle: "Deep purple blueberries for bowls, baking, and brain boosting.",
+    label: "New arrival",
+    button: "Shop blueberries",
+    image: berryCatalog.blueberry.image,
+    link: "/shop?berry=blueberry",
+  },
+  {
+    title: "Blackberry Dessert Duo",
+    subtitle: "Bold blackberries for rich desserts, cocktails, and treats.",
+    label: "Limited time",
+    button: "Shop blackberries",
+    image: berryCatalog.blackberry.image,
+    link: "/shop?berry=blackberry",
+  },
+  {
+    title: "Raspberry Refresh Set",
+    subtitle: "Tangy raspberries for bright bowls, salads, and snacks.",
+    label: "Seasonal offer",
+    button: "Shop raspberries",
+    image: berryCatalog.raspberry.image,
+    link: "/shop?berry=raspberry",
+  },
+];
+
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedBerry, setSelectedBerry] = useState<BerryKey | null>(null);
@@ -60,7 +95,11 @@ export default function HomePage() {
   return (
     <main className="page-shell">
       <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
+        <Link href="/">
+          <a className="brand" aria-label="Plantopia Farms home">
+            <img src="/logo.svg" alt="Plantopia Farms" />
+          </a>
+        </Link>
         <nav className="nav">
           <Link href="/">Home</Link>
           <Link href="/shop">Shop</Link>
@@ -132,6 +171,25 @@ export default function HomePage() {
             />
           ))}
         </div>
+      </section>
+
+      <section className="offer-grid">
+        {offerCards.map((offer) => (
+          <div key={offer.title} className="offer-card">
+            <div
+              className="offer-image"
+              style={{ backgroundImage: `url(${offer.image})` }}
+            />
+            <div className="offer-copy">
+              <span className="offer-chip">{offer.label}</span>
+              <h2>{offer.title}</h2>
+              <p>{offer.subtitle}</p>
+              <button type="button" onClick={() => router.push(offer.link)}>
+                {offer.button}
+              </button>
+            </div>
+          </div>
+        ))}
       </section>
 
       <section className="section-intro">
@@ -246,7 +304,13 @@ export default function HomePage() {
 
       <footer className="site-footer">
         <div className="footer-inner">
-          <div className="footer-brand">Plantopia Farms</div>
+          <div className="footer-brand">
+            <Link href="/">
+              <a aria-label="Plantopia Farms home">
+                <img src="/logo.svg" alt="Plantopia Farms" />
+              </a>
+            </Link>
+          </div>
           <div className="footer-links">
             <Link href="/shop">Shop</Link>
             <Link href="/about">About</Link>
@@ -254,13 +318,14 @@ export default function HomePage() {
             <Link href="/orders">My Orders</Link>
           </div>
           <div className="footer-contact">
-            <div>📞 +91 98765 43210</div>
-            <div>✉️ hello@plantopiafarms.com</div>
+            <div>📞 +91 74004 55538</div>
+            <div>📞 +91 97909 65058</div>
+            <div>✉️ benitto@plantopiafarms.com</div>
           </div>
         </div>
         <div className="footer-note">
-          © {new Date().getFullYear()} Plantopia Farms — Fresh berries
-          delivered.
+          © {new Date().getFullYear()} Plantopia Farms — Fresh berries from
+          Kotagiri.
         </div>
       </footer>
     </main>

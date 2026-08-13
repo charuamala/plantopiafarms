@@ -1,10 +1,15 @@
 import Link from "next/link";
+import TeamSection from "../src/components/TeamSection";
 
 export default function AboutPage() {
   return (
     <main className="page-shell">
       <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
+        <Link href="/">
+          <a className="brand" aria-label="Plantopia Farms home">
+            <img src="/logo.svg" alt="Plantopia Farms" />
+          </a>
+        </Link>
         <nav className="nav">
           <Link href="/">Home</Link>
           <Link href="/shop">Shop</Link>
@@ -47,9 +52,17 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <TeamSection />
+
       <footer className="site-footer compact">
         <div className="footer-inner">
-          <div className="footer-brand">Plantopia Farms</div>
+          <div className="footer-brand">
+            <Link href="/">
+              <a aria-label="Plantopia Farms home">
+                <img src="/logo.svg" alt="Plantopia Farms" />
+              </a>
+            </Link>
+          </div>
           <div className="footer-links">
             <Link href="/">Home</Link>
             <Link href="/shop">Shop</Link>

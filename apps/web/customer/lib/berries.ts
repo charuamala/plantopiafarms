@@ -22,6 +22,8 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
       "Rich in vitamin C and antioxidants",
       "Supports skin health and immunity",
       "Naturally hydrating and low in calories",
+      "Helps reduce oxidative stress after workouts",
+      "Great for smoothies, desserts and refreshing breakfasts",
     ],
     nutrition: ["Vitamin C", "Folate", "Fiber", "Antioxidants"],
     price: "₹299 / 250g",
@@ -29,14 +31,15 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
   blueberry: {
     name: "Blueberry",
     short: "Deep purple, flavor-packed",
-    image:
-      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/blueberry.jpg",
     description:
       "Our blueberries are carefully harvested to deliver a burst of flavor, a soft texture, and a rich antioxidant profile.",
     benefits: [
       "Supports brain and heart health",
       "Packed with anthocyanins",
       "Helps protect cells from oxidative stress",
+      "Aids eye health and sharper focus during busy days",
+      "Perfect for yogurt bowls, oats, and post-workout snacks",
     ],
     nutrition: ["Vitamin K", "Manganese", "Fiber", "Antioxidants"],
     price: "₹399 / 250g",
@@ -44,14 +47,15 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
   blackberry: {
     name: "Blackberry",
     short: "Bold flavor, rich texture",
-    image:
-      "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/blackberry.jpg",
     description:
       "Blackberries bring a deep, juicy taste with a naturally rich profile that stands out in desserts, smoothies, and fresh bowls.",
     benefits: [
       "High in fiber for digestion",
       "Supports immune function",
       "Loaded with natural polyphenols",
+      "Helps keep energy levels steady throughout the day",
+      "Adds a rich, fruity boost to smoothies and fruit bowls",
     ],
     nutrition: ["Fiber", "Vitamin C", "Manganese", "Polyphenols"],
     price: "₹349 / 250g",
@@ -67,6 +71,8 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
       "Excellent source of vitamin C",
       "Supports healthy skin and immunity",
       "Naturally uplifting and refreshing",
+      "Helps maintain hydration with a light, clean finish",
+      "Ideal for fruit plates, chia bowls, and summer cooling blends",
     ],
     nutrition: ["Vitamin C", "Fiber", "Potassium", "Antioxidants"],
     price: "₹329 / 250g",

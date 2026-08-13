@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "plantopiafarms-api",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-08-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "account_id": "8f731220bf501bb04c2d07f5b860752a",
+  // `express` unconditionally requires `body-parser` -> `raw-body` ->
+  // `iconv-lite`, and iconv-lite crashes at import time under Workers'
+  // nodejs_compat (see shims/iconv-lite.ts for the full explanation and
+  // https://github.com/cloudflare/workers-sdk/issues/9309). This aliases
+  // every `require('iconv-lite')` to a minimal Workers-safe shim.
+  "alias": {
+    "iconv-lite": "./shims/iconv-lite.ts"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "routes": [
+    {
+      "pattern": "api.plantopiaforms.com",
+      "custom_domain": true
+    }
+  ]
+}

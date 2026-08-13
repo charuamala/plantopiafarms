@@ -4,14 +4,12 @@
   "version": "0.1.0",
   "workspaces": [
     "backend",
-    "apps/mobile",
     "packages/types"
   ],
   "scripts": {
     "dev:backend": "npm --workspace backend run dev",
     "dev:customer": "npm --prefix apps/web/customer run dev",
     "dev:admin": "npm --prefix apps/web/admin run dev",
-    "dev:mobile": "npm --workspace @plantopia/mobile run start",
     "start:backend": "npm --workspace backend run start"
   }
 }

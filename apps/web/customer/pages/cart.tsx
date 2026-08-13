@@ -52,7 +52,11 @@ export default function CartPage() {
     return (
       <main className="page-shell">
         <header className="topbar">
-          <div className="brand">Plantopia Farms</div>
+          <Link href="/">
+            <a className="brand" aria-label="Plantopia Farms home">
+              <img src="/logo.svg" alt="Plantopia Farms" />
+            </a>
+          </Link>
           <nav className="nav">
             <Link href="/">Home</Link>
             <Link href="/shop">Shop</Link>
