@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { berryCatalog, BerryKey } from "../lib/berries";
-
-type CartItem = { id: BerryKey; quantity: number };
+import { fetchProducts, Product } from "../lib/api";
+import { CartItem, clearCart, getCart } from "../lib/cart";
+import { addOrder } from "../lib/orders";
 
 type CheckoutValues = {
   name: string;
@@ -19,6 +18,8 @@ type CheckoutValues = {
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<Record<number, Product>>({});
+  const [loading, setLoading] = useState(true);
   const [values, setValues] = useState<CheckoutValues>({
     name: "",
     email: "",
@@ -34,18 +35,23 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("plantopiaCart");
-    setCart(stored ? JSON.parse(stored) : []);
+    setCart(getCart());
+    fetchProducts({ limit: 100 })
+      .then((result) => {
+        const map: Record<number, Product> = {};
+        result.products.forEach((p) => {
+          map[p.id] = p;
+        });
+        setProducts(map);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const totalAmount = cart.reduce(
-    (sum, item) =>
-      sum +
-      item.quantity *
-        parseInt(berryCatalog[item.id].price.replace(/[^0-9]/g, ""), 10),
-    0,
-  );
+  const totalAmount = cart.reduce((sum, item) => {
+    const product = products[item.productId];
+    if (!product) return sum;
+    return sum + item.quantity * (product.salePrice ?? product.price);
+  }, 0);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,39 +67,45 @@ export default function CheckoutPage() {
       return;
     }
 
-    const newOrder = {
+    addOrder({
       id: `order_${Date.now()}`,
       name: values.name,
       email: values.email,
       address: `${values.address}, ${values.city}, ${values.state} - ${values.postal}`,
-      cart,
+      items: cart
+        .filter((item) => products[item.productId])
+        .map((item) => {
+          const product = products[item.productId];
+          return {
+            productId: item.productId,
+            name: product.name,
+            price: product.salePrice ?? product.price,
+            quantity: item.quantity,
+          };
+        }),
       total: totalAmount,
       status: "Confirmed",
       createdAt: new Date().toISOString(),
-    };
-
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem("plantopiaOrders");
-      const orders = stored ? JSON.parse(stored) : [];
-      orders.unshift(newOrder);
-      window.localStorage.setItem("plantopiaOrders", JSON.stringify(orders));
-      window.localStorage.removeItem("plantopiaCart");
-    }
+    });
+    clearCart();
 
     setMessage("Your test payment was accepted. Thank you for your order!");
     setTimeout(() => router.push("/orders"), 1400);
   };
 
+  if (loading) {
+    return (
+      <main className="page-shell">
+        <section className="empty-state">
+          <p>Loading checkout…</p>
+        </section>
+      </main>
+    );
+  }
+
   if (!cart.length) {
     return (
       <main className="page-shell">
-        <header className="topbar">
-          <div className="brand">Plantopia Farms</div>
-          <nav className="nav">
-            <Link href="/">Home</Link>
-            <Link href="/shop">Shop</Link>
-          </nav>
-        </header>
         <section className="empty-state">
           <h1>There’s nothing to checkout yet.</h1>
           <button type="button" onClick={() => router.push("/shop")}>
@@ -106,15 +118,6 @@ export default function CheckoutPage() {
 
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/cart">Cart</Link>
-          <Link href="/orders">Orders</Link>
-        </nav>
-      </header>
-
       <section className="detail-page">
         <div className="detail-card">
           <h1>Checkout</h1>
@@ -228,21 +231,19 @@ export default function CheckoutPage() {
             </form>
             <div className="checkout-summary-panel">
               <h2>Order summary</h2>
-              {cart.map((item) => (
-                <div key={item.id} className="summary-item">
-                  <span>
-                    {berryCatalog[item.id].name} x{item.quantity}
-                  </span>
-                  <strong>
-                    ₹
-                    {item.quantity *
-                      parseInt(
-                        berryCatalog[item.id].price.replace(/[^0-9]/g, ""),
-                        10,
-                      )}
-                  </strong>
-                </div>
-              ))}
+              {cart.map((item) => {
+                const product = products[item.productId];
+                if (!product) return null;
+                const unitPrice = product.salePrice ?? product.price;
+                return (
+                  <div key={item.productId} className="summary-item">
+                    <span>
+                      {product.name} x{item.quantity}
+                    </span>
+                    <strong>₹{unitPrice * item.quantity}</strong>
+                  </div>
+                );
+              })}
               <div className="summary-total">
                 <span>Total</span>
                 <strong>₹{totalAmount}</strong>

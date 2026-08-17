@@ -31,14 +31,6 @@ export default function RegisterPage() {
 
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/login">Login</Link>
-        </nav>
-      </header>
-
       <section className="auth-page">
         <div className="auth-card">
           <h1>Create your account</h1>

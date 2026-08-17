@@ -1,8 +1,6 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import mongoose from 'mongoose';
-import morgan from 'morgan';
 import { errorHandler } from './middleware/errorHandler';
 import adminRoutes from './routes/adminRoutes';
 import authRoutes from './routes/authRoutes';
@@ -20,7 +18,6 @@ const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, message: 'Plantopia Farms API is running' });
@@ -36,17 +33,5 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use(errorHandler);
-
-export const connectDatabase = async () => {
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/plantopia-farms';
-
-  try {
-    await mongoose.connect(mongoUri);
-    console.log('MongoDB connected');
-  } catch (error) {
-    console.error('MongoDB connection failed:', error);
-    process.exit(1);
-  }
-};
 
 export default app;

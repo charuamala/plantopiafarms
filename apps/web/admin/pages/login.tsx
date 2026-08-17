@@ -1,59 +1,60 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { adminLogin, setToken } from "../lib/api";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (email === "admin@plantopia.com" && password === "Plantopia123") {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("plantopiaAdminSession", "active");
-      }
+    setError("");
+    setLoading(true);
+    try {
+      const token = await adminLogin(email, password);
+      setToken(token);
       router.push("/");
-      return;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid admin credentials.");
+    } finally {
+      setLoading(false);
     }
-    setError(
-      "Invalid admin credentials. Use admin@plantopia.com / Plantopia123.",
-    );
   };
 
   return (
-    <main className="page-shell">
-      <section className="auth-page">
-        <div className="auth-card">
-          <h1>Admin login</h1>
-          <p>Enter the admin credentials to manage orders and view reports.</p>
-          <form onSubmit={handleSubmit}>
-            <label>
-              Email address
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </label>
-            <label>
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </label>
-            {error && <p className="form-error">{error}</p>}
-            <button type="submit" className="cta-button">
-              Login
-            </button>
-          </form>
-          <p>Admin user: admin@plantopia.com | Password: Plantopia123</p>
-        </div>
-      </section>
-    </main>
+    <section className="auth-page">
+      <div className="auth-card">
+        <h1>Admin login</h1>
+        <p>Enter the admin credentials to manage orders and view reports.</p>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Email address
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+          {error && <p className="form-error">{error}</p>}
+          <button type="submit" className="cta-button" disabled={loading}>
+            {loading ? "Signing in…" : "Login"}
+          </button>
+        </form>
+        <p>Admin user: admin@plantopia.com | Password: Plantopia123</p>
+      </div>
+    </section>
   );
 }

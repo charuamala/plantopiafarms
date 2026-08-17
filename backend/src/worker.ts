@@ -15,18 +15,17 @@
  *
  * This file is intentionally a *thin adapter* — none of the Express route or
  * business logic in ./app.ts, ./routes/*, ./middleware/*, etc. is modified.
- * `src/server.ts` (Node's `app.listen` + `connectDatabase`) remains the entry
- * point for local development (`npm run dev` / `npm start`); this file is
- * the separate entry point Wrangler builds for the Workers runtime (see
- * `main` in wrangler.jsonc).
+ * `src/server.ts` (plain Node `app.listen`) remains the entry point for
+ * local development of routes that don't need a database; this file is the
+ * separate entry point Wrangler builds for the Workers runtime (see `main`
+ * in wrangler.jsonc).
  *
- * Database note: `connectDatabase()` is deliberately NOT invoked here.
- * There is no production MongoDB yet (MONGODB_URI is intentionally left
- * unset as a Worker secret). Calling `mongoose.connect()` eagerly at startup
- * with a bad/missing URI would throw and break every request, including
- * routes that never touch the database. Once a real MONGODB_URI secret is
- * set, database-backed routes can call/await `connectDatabase()` lazily
- * (e.g. from middleware) — that wiring is out of scope for this change.
+ * Database note: product/category/admin routes read the `DB` binding
+ * (Cloudflare D1, see wrangler.jsonc's `d1_databases`) via
+ * `import { env } from "cloudflare:workers"` inside `./db/d1.ts`. That
+ * binding only exists in the Workers runtime, so those routes need
+ * `npm run dev:worker` (wrangler dev, which runs a local D1 via Miniflare)
+ * rather than the plain `npm run dev` Node entry point.
  */
 import { httpServerHandler } from 'cloudflare:node';
 import app from './app';

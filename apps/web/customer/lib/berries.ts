@@ -8,6 +8,7 @@ export type BerryInfo = {
   benefits: string[];
   nutrition: string[];
   price: string;
+  priceValue: number;
 };
 
 export const berryCatalog: Record<BerryKey, BerryInfo> = {
@@ -27,6 +28,7 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
     ],
     nutrition: ["Vitamin C", "Folate", "Fiber", "Antioxidants"],
     price: "₹299 / 250g",
+    priceValue: 299,
   },
   blueberry: {
     name: "Blueberry",
@@ -43,6 +45,7 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
     ],
     nutrition: ["Vitamin K", "Manganese", "Fiber", "Antioxidants"],
     price: "₹399 / 250g",
+    priceValue: 399,
   },
   blackberry: {
     name: "Blackberry",
@@ -59,12 +62,12 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
     ],
     nutrition: ["Fiber", "Vitamin C", "Manganese", "Polyphenols"],
     price: "₹349 / 250g",
+    priceValue: 349,
   },
   raspberry: {
     name: "Raspberry",
     short: "Tangy, aromatic and vibrant",
-    image:
-      "https://images.unsplash.com/photo-1563557122714-1a0b8896d8be?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/raspberry.jpg",
     description:
       "Crafted for freshness and aroma, our raspberries offer a bright, tangy flavor with soft texture and a vibrant ruby finish.",
     benefits: [
@@ -76,6 +79,7 @@ export const berryCatalog: Record<BerryKey, BerryInfo> = {
     ],
     nutrition: ["Vitamin C", "Fiber", "Potassium", "Antioxidants"],
     price: "₹329 / 250g",
+    priceValue: 329,
   },
 };
 

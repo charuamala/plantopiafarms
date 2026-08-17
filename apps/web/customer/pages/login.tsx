@@ -40,18 +40,6 @@ export default function LoginPage() {
 
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <Link href="/">
-          <a className="brand" aria-label="Plantopia Farms home">
-            <img src="/logo.svg" alt="Plantopia Farms" />
-          </a>
-        </Link>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/register">Register</Link>
-        </nav>
-      </header>
-
       <section className="auth-page">
         <div className="auth-card">
           <h1>Sign in</h1>

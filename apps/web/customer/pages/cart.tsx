@@ -1,26 +1,26 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { berryCatalog, BerryKey } from "../lib/berries";
-
-type CartItem = { id: BerryKey; quantity: number };
+import { fetchProducts, Product } from "../lib/api";
+import { CartItem, getCart, removeFromCart, updateQuantity } from "../lib/cart";
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<Record<number, Product>>({});
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("plantopiaCart");
-    setCart(stored ? JSON.parse(stored) : []);
+    setCart(getCart());
+    fetchProducts({ limit: 100 })
+      .then((result) => {
+        const map: Record<number, Product> = {};
+        result.products.forEach((p) => {
+          map[p.id] = p;
+        });
+        setProducts(map);
+      })
+      .finally(() => setLoading(false));
   }, []);
-
-  const saveCart = (nextCart: CartItem[]) => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("plantopiaCart", JSON.stringify(nextCart));
-    }
-    setCart(nextCart);
-  };
 
   const totalItems = useMemo(
     () => cart.reduce((sum, item) => sum + item.quantity, 0),
@@ -28,41 +28,37 @@ export default function CartPage() {
   );
   const totalAmount = useMemo(
     () =>
-      cart.reduce(
-        (sum, item) =>
-          sum +
-          item.quantity *
-            parseInt(berryCatalog[item.id].price.replace(/[^0-9]/g, ""), 10),
-        0,
-      ),
-    [cart],
+      cart.reduce((sum, item) => {
+        const product = products[item.productId];
+        if (!product) return sum;
+        return sum + item.quantity * (product.salePrice ?? product.price);
+      }, 0),
+    [cart, products],
   );
 
-  const updateQuantity = (id: BerryKey, quantity: number) => {
-    const nextCart = cart.map((item) =>
-      item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item,
-    );
-    saveCart(nextCart);
+  const handleUpdateQuantity = (productId: number, quantity: number) => {
+    updateQuantity(productId, Math.max(1, quantity));
+    setCart(getCart());
   };
 
-  const removeItem = (id: BerryKey) =>
-    saveCart(cart.filter((item) => item.id !== id));
+  const handleRemove = (productId: number) => {
+    removeFromCart(productId);
+    setCart(getCart());
+  };
+
+  if (loading) {
+    return (
+      <main className="page-shell">
+        <section className="empty-state">
+          <p>Loading your cart…</p>
+        </section>
+      </main>
+    );
+  }
 
   if (!cart.length) {
     return (
       <main className="page-shell">
-        <header className="topbar">
-          <Link href="/">
-            <a className="brand" aria-label="Plantopia Farms home">
-              <img src="/logo.svg" alt="Plantopia Farms" />
-            </a>
-          </Link>
-          <nav className="nav">
-            <Link href="/">Home</Link>
-            <Link href="/shop">Shop</Link>
-            <Link href="/login">Login</Link>
-          </nav>
-        </header>
         <section className="empty-state">
           <h1>Your cart is empty</h1>
           <p>Pick a berry box to get started and enjoy farm-fresh delivery.</p>
@@ -76,53 +72,51 @@ export default function CartPage() {
 
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/shop">Shop</Link>
-          <Link href="/checkout">Checkout</Link>
-        </nav>
-      </header>
-
       <section className="detail-page">
         <div className="detail-card">
           <h1>Your cart</h1>
           <p>{totalItems} items selected</p>
           <div className="cart-list">
-            {cart.map((item) => (
-              <div key={item.id} className="cart-item">
-                <img
-                  src={berryCatalog[item.id].image}
-                  alt={berryCatalog[item.id].name}
-                />
-                <div>
-                  <h3>{berryCatalog[item.id].name}</h3>
-                  <p>{berryCatalog[item.id].short}</p>
-                  <div className="cart-actions">
-                    <label>
-                      Qty
-                      <input
-                        type="number"
-                        min={1}
-                        value={item.quantity}
-                        onChange={(event) =>
-                          updateQuantity(item.id, Number(event.target.value))
-                        }
-                      />
-                    </label>
-                    <button
-                      type="button"
-                      className="secondary"
-                      onClick={() => removeItem(item.id)}
-                    >
-                      Remove
-                    </button>
+            {cart.map((item) => {
+              const product = products[item.productId];
+              if (!product) return null;
+              const unitPrice = product.salePrice ?? product.price;
+              return (
+                <div key={item.productId} className="cart-item">
+                  <img src={product.images[0]} alt={product.name} />
+                  <div>
+                    <h3>{product.name}</h3>
+                    <p>
+                      {product.shortDescription} · {product.weight}
+                    </p>
+                    <div className="cart-actions">
+                      <label>
+                        Qty
+                        <input
+                          type="number"
+                          min={1}
+                          value={item.quantity}
+                          onChange={(event) =>
+                            handleUpdateQuantity(
+                              item.productId,
+                              Number(event.target.value),
+                            )
+                          }
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => handleRemove(item.productId)}
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
+                  <strong>₹{unitPrice * item.quantity}</strong>
                 </div>
-                <strong>{berryCatalog[item.id].price}</strong>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="checkout-summary">
             <div>

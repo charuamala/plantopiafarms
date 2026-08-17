@@ -1,17 +1,11 @@
-type Person = {
-  name: string;
-  title: string;
-  bio: string;
-  image?: string;
-};
+import FounderCard, { Person } from "./FounderCard";
 
 const founders: Person[] = [
-  // Placeholder entry — replace with actual founder details from the HortBio page
   {
-    name: "Founder Name",
-    title: "Co-founder & CEO",
-    bio: "Passionate about sustainable horticulture and farm-to-table produce. Replace this text with the founder's bio from the source site.",
-    image: "/logo.svg",
+    name: "James Susaimuthu",
+    title: "Founder & CEO",
+    bio: "Holds a PhD in Plant Sciences and brings 15 years of experience in the field, leading Plantopia Farms with a focus on sustainable horticulture and farm-to-table produce.",
+    image: "/images/james-susaimuthu.jpg",
   },
 ];
 
@@ -25,20 +19,7 @@ export default function TeamSection() {
 
       <div className="team-grid">
         {founders.map((p, idx) => (
-          <article
-            key={p.name}
-            className="team-card"
-            style={{ animationDelay: `${idx * 120}ms` }}
-          >
-            <div className="team-image-wrap">
-              <img src={p.image} alt={p.name} />
-            </div>
-            <div className="team-body">
-              <h3>{p.name}</h3>
-              <strong>{p.title}</strong>
-              <p className="team-bio">{p.bio}</p>
-            </div>
-          </article>
+          <FounderCard key={p.name} person={p} delay={idx * 120} />
         ))}
       </div>
     </section>

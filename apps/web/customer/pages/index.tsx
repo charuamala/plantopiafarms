@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { berryCatalog, BerryKey, socialLinks } from "../lib/berries";
+import { fetchProducts, Product } from "../lib/api";
+import { addToCart } from "../lib/cart";
 
 const bannerOrder: BerryKey[] = [
   "strawberry",
@@ -48,7 +49,7 @@ const offerCards = [
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedBerry, setSelectedBerry] = useState<BerryKey | null>(null);
-  const [cartCount, setCartCount] = useState(0);
+  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -58,65 +59,27 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("plantopiaCart");
-    const cart = stored ? JSON.parse(stored) : [];
-    setCartCount(
-      cart.reduce(
-        (sum: number, item: { quantity: number }) => sum + item.quantity,
-        0,
-      ),
-    );
-  }, []);
-
-  const handleAddToCart = (berry: BerryKey) => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("plantopiaCart");
-    const cart = stored ? JSON.parse(stored) : [];
-    const existing = cart.find((item: any) => item.id === berry);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      cart.push({ id: berry, quantity: 1 });
-    }
-    window.localStorage.setItem("plantopiaCart", JSON.stringify(cart));
-    setCartCount(
-      cart.reduce(
-        (sum: number, item: { quantity: number }) => sum + item.quantity,
-        0,
-      ),
-    );
-  };
-
   const activeBerry = bannerOrder[activeSlide];
   const slideInfo = berryCatalog[activeBerry];
 
+  useEffect(() => {
+    let cancelled = false;
+    fetchProducts({ category: activeBerry, sort: "featured", limit: 1 }).then(
+      (result) => {
+        if (!cancelled) setFeaturedProduct(result.products[0] ?? null);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [activeBerry]);
+
+  const handleQuickAdd = () => {
+    if (featuredProduct) addToCart(featuredProduct.id, 1);
+  };
+
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <Link href="/">
-          <a className="brand" aria-label="Plantopia Farms home">
-            <img src="/logo.svg" alt="Plantopia Farms" />
-          </a>
-        </Link>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/shop">Shop</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
-          <Link href="/login">Login</Link>
-          <Link href="/register">Register</Link>
-          <button
-            className="nav-cart"
-            type="button"
-            onClick={() => router.push("/cart")}
-          >
-            Cart ({cartCount})
-          </button>
-        </nav>
-      </header>
-
       <section
         className="hero"
         style={{
@@ -148,16 +111,27 @@ export default function HomePage() {
 
         <div className="hero-card">
           <div className="berry-badge">Featured</div>
-          <h3>{slideInfo.name}</h3>
-          <p>{slideInfo.short}</p>
-          <strong>{slideInfo.price}</strong>
-          <button
-            type="button"
-            className="cta-button"
-            onClick={() => setSelectedBerry(activeBerry)}
-          >
-            Quick view
-          </button>
+          <h3>{featuredProduct?.name ?? slideInfo.name}</h3>
+          <p>{featuredProduct?.shortDescription ?? slideInfo.short}</p>
+          <strong>
+            {featuredProduct
+              ? `₹${featuredProduct.salePrice ?? featuredProduct.price} / ${featuredProduct.weight}`
+              : slideInfo.price}
+          </strong>
+          <div className="hero-card-actions">
+            <button
+              type="button"
+              className="cta-button"
+              onClick={() => setSelectedBerry(activeBerry)}
+            >
+              Quick view
+            </button>
+            {featuredProduct && (
+              <button type="button" className="secondary" onClick={handleQuickAdd}>
+                Add to cart
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="hero-dots" aria-label="banner slider dots">
@@ -223,9 +197,9 @@ export default function HomePage() {
               <button
                 type="button"
                 className="secondary"
-                onClick={() => router.push(`/berry/${key}`)}
+                onClick={() => router.push(`/shop?berry=${key}`)}
               >
-                Full details
+                Shop now
               </button>
             </div>
           </div>
@@ -278,56 +252,19 @@ export default function HomePage() {
                 <strong>{berryCatalog[selectedBerry].price}</strong>
                 <button
                   type="button"
-                  className="cta-button"
-                  onClick={() => {
-                    handleAddToCart(selectedBerry);
-                    setSelectedBerry(null);
-                  }}
-                >
-                  Add to cart
-                </button>
-                <button
-                  type="button"
                   className="secondary"
                   onClick={() => {
-                    router.push(`/berry/${selectedBerry}`);
+                    router.push(`/shop?berry=${selectedBerry}`);
                     setSelectedBerry(null);
                   }}
                 >
-                  View full details
+                  Shop {berryCatalog[selectedBerry].name.toLowerCase()}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <Link href="/">
-              <a aria-label="Plantopia Farms home">
-                <img src="/logo.svg" alt="Plantopia Farms" />
-              </a>
-            </Link>
-          </div>
-          <div className="footer-links">
-            <Link href="/shop">Shop</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/orders">My Orders</Link>
-          </div>
-          <div className="footer-contact">
-            <div>📞 +91 74004 55538</div>
-            <div>📞 +91 97909 65058</div>
-            <div>✉️ benitto@plantopiafarms.com</div>
-          </div>
-        </div>
-        <div className="footer-note">
-          © {new Date().getFullYear()} Plantopia Farms — Fresh berries from
-          Kotagiri.
-        </div>
-      </footer>
     </main>
   );
 }

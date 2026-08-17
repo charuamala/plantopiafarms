@@ -1,12 +1,10 @@
-import app, { connectDatabase } from './app';
+import app from './app';
 
 const PORT = Number(process.env.PORT || 4000);
 
-async function startServer() {
-  await connectDatabase();
-  app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
-  });
-}
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Backend server running on http://localhost:${PORT}`);
+  console.log(
+    'Note: product/category/admin routes need Cloudflare D1 and only work under `npm run dev:worker` (wrangler dev), not this plain Node entry point.'
+  );
+});

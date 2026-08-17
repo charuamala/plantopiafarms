@@ -1,21 +1,9 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { berryCatalog } from "../lib/berries";
-
-type OrderItem = {
-  id: string;
-  name: string;
-  email: string;
-  address: string;
-  cart: { id: string; quantity: number }[];
-  total: number;
-  status: string;
-  createdAt: string;
-};
+import { getOrdersForEmail, Order } from "../lib/orders";
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [user, setUser] = useState<{ name: string; email: string } | null>(
     null,
   );
@@ -28,14 +16,9 @@ export default function OrdersPage() {
       router.push("/login");
       return;
     }
-    setUser(JSON.parse(storedUser));
-    const storedOrders = window.localStorage.getItem("plantopiaOrders");
-    const allOrders = storedOrders ? JSON.parse(storedOrders) : [];
-    setOrders(
-      allOrders.filter(
-        (order: any) => order.email === JSON.parse(storedUser).email,
-      ),
-    );
+    const parsedUser = JSON.parse(storedUser);
+    setUser(parsedUser);
+    setOrders(getOrdersForEmail(parsedUser.email));
   }, [router]);
 
   const handleLogout = () => {
@@ -47,20 +30,14 @@ export default function OrdersPage() {
 
   return (
     <main className="page-shell">
-      <header className="topbar">
-        <div className="brand">Plantopia Farms</div>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/shop">Shop</Link>
-          <button type="button" className="secondary" onClick={handleLogout}>
-            Logout
-          </button>
-        </nav>
-      </header>
-
       <section className="detail-page">
         <div className="detail-card">
-          <h1>My orders</h1>
+          <div className="section-heading">
+            <h1>My orders</h1>
+            <button type="button" className="secondary" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
           {user && <p>Welcome back, {user.name}.</p>}
           {!orders.length ? (
             <div className="empty-state">
@@ -82,17 +59,12 @@ export default function OrdersPage() {
                   </div>
                   <p>{order.address}</p>
                   <div className="order-items">
-                    {order.cart.map((item) => (
+                    {order.items.map((item) => (
                       <div
-                        key={`${order.id}-${item.id}`}
+                        key={`${order.id}-${item.productId}`}
                         className="order-item-row"
                       >
-                        <span>
-                          {
-                            berryCatalog[item.id as keyof typeof berryCatalog]
-                              .name
-                          }
-                        </span>
+                        <span>{item.name}</span>
                         <strong>x{item.quantity}</strong>
                       </div>
                     ))}

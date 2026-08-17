@@ -5,9 +5,13 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev:worker": "wrangler dev",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed": "tsx src/seed.ts"
+    "db:migrate": "wrangler d1 execute plantopia-db --local --file=./schema.sql",
+    "db:migrate:remote": "wrangler d1 execute plantopia-db --remote --file=./schema.sql",
+    "db:seed": "wrangler d1 execute plantopia-db --local --file=./seed.sql",
+    "db:seed:remote": "wrangler d1 execute plantopia-db --remote --file=./seed.sql"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -15,7 +19,6 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.5.1",
     "morgan": "^1.10.0",
     "zod": "^3.25.0"
   },

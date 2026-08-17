@@ -16,6 +16,13 @@
   "observability": {
     "enabled": true
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "plantopia-db",
+      "database_id": "f624c384-7341-468f-9417-93b71548226d"
+    }
+  ],
   "routes": [
     {
       "pattern": "api.plantopiaforms.com",
