@@ -9,17 +9,40 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const { slug } = router.query;
   const [product, setProduct] = useState<Product | null | undefined>(undefined);
+  const [loadError, setLoadError] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
 
-  useEffect(() => {
+  const load = () => {
     if (typeof slug !== "string") return;
-    fetchProductBySlug(slug).then((result) => {
-      setProduct(result);
-      if (result) setWishlisted(isWishlisted(result.id));
-    });
+    setLoadError(false);
+    fetchProductBySlug(slug)
+      .then((result) => {
+        setProduct(result);
+        if (result) setWishlisted(isWishlisted(result.id));
+      })
+      .catch(() => setLoadError(true));
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  if (loadError) {
+    return (
+      <main className="page-shell">
+        <section className="empty-state">
+          <h1>Couldn't load this product</h1>
+          <p>We're having trouble reaching the shop right now. Please try again.</p>
+          <button type="button" onClick={load}>
+            Retry
+          </button>
+        </section>
+      </main>
+    );
+  }
 
   if (product === undefined) {
     return (

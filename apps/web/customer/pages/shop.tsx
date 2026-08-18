@@ -33,6 +33,8 @@ export default function ShopPage() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -56,6 +58,7 @@ export default function ShopPage() {
   useEffect(() => {
     if (!router.isReady) return;
     setLoading(true);
+    setLoadError(false);
     const apiFilters: ProductFilters = {
       category: filters.category,
       minPrice: filters.minPrice,
@@ -75,6 +78,12 @@ export default function ShopPage() {
         setTotal(result.total);
         setTotalPages(result.totalPages);
       })
+      .catch(() => {
+        setProducts([]);
+        setTotal(0);
+        setTotalPages(1);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -89,6 +98,7 @@ export default function ShopPage() {
     search,
     sort,
     page,
+    retryKey,
   ]);
 
   const updateQuery = (
@@ -211,6 +221,18 @@ export default function ShopPage() {
           {loading ? (
             <div className="shop-empty-state">
               <h3>Loading products…</h3>
+            </div>
+          ) : loadError ? (
+            <div className="shop-empty-state">
+              <h3>Couldn't load products</h3>
+              <p>We're having trouble reaching the shop right now. Please try again shortly.</p>
+              <button
+                type="button"
+                className="cta-button"
+                onClick={() => setRetryKey((k) => k + 1)}
+              >
+                Retry
+              </button>
             </div>
           ) : products.length === 0 ? (
             <div className="shop-empty-state">

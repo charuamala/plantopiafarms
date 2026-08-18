@@ -32,10 +32,12 @@ export default function CheckoutPage() {
     cvc: "",
   });
   const [message, setMessage] = useState("");
+  const [loadError, setLoadError] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setCart(getCart());
+  const loadProducts = () => {
+    setLoading(true);
+    setLoadError(false);
     fetchProducts({ limit: 100 })
       .then((result) => {
         const map: Record<number, Product> = {};
@@ -44,7 +46,14 @@ export default function CheckoutPage() {
         });
         setProducts(map);
       })
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    setCart(getCart());
+    loadProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const totalAmount = cart.reduce((sum, item) => {
@@ -110,6 +119,20 @@ export default function CheckoutPage() {
           <h1>There’s nothing to checkout yet.</h1>
           <button type="button" onClick={() => router.push("/shop")}>
             Browse berries
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="page-shell">
+        <section className="empty-state">
+          <h1>Couldn't load checkout</h1>
+          <p>We're having trouble reaching the shop right now. Please try again.</p>
+          <button type="button" onClick={loadProducts}>
+            Retry
           </button>
         </section>
       </main>

@@ -8,6 +8,7 @@ export default function WishlistPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const load = () => {
     const ids = getWishlist();
@@ -16,9 +17,14 @@ export default function WishlistPage() {
       setLoading(false);
       return;
     }
+    setLoadError(false);
     fetchProducts({ limit: 100 })
       .then((result) => {
         setProducts(result.products.filter((p) => ids.includes(p.id)));
+      })
+      .catch(() => {
+        setProducts([]);
+        setLoadError(true);
       })
       .finally(() => setLoading(false));
   };
@@ -44,6 +50,13 @@ export default function WishlistPage() {
           <h1>Your wishlist</h1>
           {loading ? (
             <p>Loading…</p>
+          ) : loadError ? (
+            <div className="empty-state">
+              <p>Couldn't load your wishlist items right now.</p>
+              <button type="button" onClick={load}>
+                Retry
+              </button>
+            </div>
           ) : !products.length ? (
             <div className="empty-state">
               <p>Your wishlist is empty.</p>

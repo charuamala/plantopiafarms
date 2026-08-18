@@ -64,11 +64,13 @@ export default function HomePage() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchProducts({ category: activeBerry, sort: "featured", limit: 1 }).then(
-      (result) => {
+    fetchProducts({ category: activeBerry, sort: "featured", limit: 1 })
+      .then((result) => {
         if (!cancelled) setFeaturedProduct(result.products[0] ?? null);
-      },
-    );
+      })
+      .catch(() => {
+        if (!cancelled) setFeaturedProduct(null);
+      });
     return () => {
       cancelled = true;
     };

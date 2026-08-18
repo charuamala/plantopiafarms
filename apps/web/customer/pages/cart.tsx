@@ -7,10 +7,12 @@ export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [products, setProducts] = useState<Record<number, Product>>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setCart(getCart());
+  const loadProducts = () => {
+    setLoading(true);
+    setLoadError(false);
     fetchProducts({ limit: 100 })
       .then((result) => {
         const map: Record<number, Product> = {};
@@ -19,7 +21,14 @@ export default function CartPage() {
         });
         setProducts(map);
       })
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    setCart(getCart());
+    loadProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const totalItems = useMemo(
@@ -64,6 +73,20 @@ export default function CartPage() {
           <p>Pick a berry box to get started and enjoy farm-fresh delivery.</p>
           <button type="button" onClick={() => router.push("/shop")}>
             Browse berries
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="page-shell">
+        <section className="empty-state">
+          <h1>Couldn't load your cart</h1>
+          <p>We're having trouble reaching the shop right now. Please try again.</p>
+          <button type="button" onClick={loadProducts}>
+            Retry
           </button>
         </section>
       </main>
