@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  NEXT_PUBLIC_API_URL: https://api.plantopiaforms.com
+  NEXT_PUBLIC_API_URL: https://api.plantopiafarms.com
 
 jobs:
   deploy-backend:
