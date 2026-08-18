@@ -4,9 +4,34 @@ on:
   push:
     branches: [main]
 
+env:
+  NEXT_PUBLIC_API_URL: https://api.plantopiaforms.com
+
 jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        working-directory: backend
+        run: npm install
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: backend
+          command: deploy
+
   deploy-customer:
     runs-on: ubuntu-latest
+    needs: deploy-backend
     permissions:
       contents: read
       deployments: write
@@ -21,6 +46,8 @@ jobs:
       - name: Build
         working-directory: apps/web/customer
         run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ env.NEXT_PUBLIC_API_URL }}
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
@@ -30,6 +57,7 @@ jobs:
 
   deploy-admin:
     runs-on: ubuntu-latest
+    needs: deploy-backend
     permissions:
       contents: read
       deployments: write
@@ -44,6 +72,8 @@ jobs:
       - name: Build
         working-directory: apps/web/admin
         run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ env.NEXT_PUBLIC_API_URL }}
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
