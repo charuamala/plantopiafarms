@@ -121,7 +121,7 @@ a {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 18px;
-  padding: 18px 0 24px;
+  padding: 18px 40px 24px;
 }
 
 .brand {
@@ -1411,6 +1411,10 @@ textarea {
 @media (max-width: 620px) {
   .page-shell {
     padding: 20px 16px 60px;
+  }
+
+  .topbar {
+    padding: 16px 16px 20px;
   }
 
   .hero {
