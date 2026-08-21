@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { ReactNode } from "react";
-import Header from "./Header";
+import HeaderOption1TwoTier from "./HeaderOption1TwoTier";
 import Footer from "./Footer";
 
 const SITE_URL = "https://plantopiafarms.com";
@@ -26,7 +26,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <meta name="twitter:description" content={DEFAULT_DESCRIPTION} />
         <meta name="twitter:image" content={DEFAULT_IMAGE} />
       </Head>
-      <Header />
+      <HeaderOption1TwoTier />
       {children}
       <Footer />
     </>

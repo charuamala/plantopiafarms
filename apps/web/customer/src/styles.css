@@ -2621,3 +2621,45 @@ textarea {
     position: static;
   }
 }
+
+.google-pay-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 999px;
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+}
+
+.google-pay-button:hover {
+  background: #1a1a1a;
+}
+
+.google-pay-glyph {
+  width: 34px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.payment-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 -4px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.payment-divider::before,
+.payment-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(24, 40, 26, 0.12);
+}
