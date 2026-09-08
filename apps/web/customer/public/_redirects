@@ -1,2 +1,5 @@
 /berry/*     /berry/[berry].html     200
 /products/*  /products/[slug].html   200
+/blog/*      /blog/[slug].html       200
+/recipes/*   /recipes/[slug].html    200
+/stories/*   /stories/[slug].html    200

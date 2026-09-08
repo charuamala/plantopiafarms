@@ -20,41 +20,6 @@ export default function Footer() {
             Farm-fresh berries grown with care in Kotagiri, delivered straight
             to your table.
           </p>
-        </div>
-
-        <div className="footer-col">
-          <h4>Shop</h4>
-          <div className="footer-links">
-            {berryLinks.map((b) => (
-              <Link key={b.key} href={`/shop?berry=${b.key}`}>
-                {b.label}
-              </Link>
-            ))}
-            <Link href="/shop">All Products</Link>
-          </div>
-        </div>
-
-        <div className="footer-col">
-          <h4>Customer Support</h4>
-          <div className="footer-links">
-            <Link href="/contact">Contact Us</Link>
-            <Link href="/faq">FAQ</Link>
-            <Link href="/orders">My Orders</Link>
-            <Link href="/wishlist">Wishlist</Link>
-          </div>
-        </div>
-
-        <div className="footer-col">
-          <h4>Company</h4>
-          <div className="footer-links">
-            <Link href="/about">About Us</Link>
-            <Link href="/blog">Blog</Link>
-            <Link href="/cart">Cart</Link>
-          </div>
-        </div>
-
-        <div className="footer-col">
-          <h4>Follow Us</h4>
           <div className="footer-links footer-social">
             <a href={socialLinks.facebook} target="_blank" rel="noreferrer">
               Facebook
@@ -72,6 +37,54 @@ export default function Footer() {
             >
               LinkedIn
             </a>
+          </div>
+        </div>
+
+        <div className="footer-col">
+          <h4>Shop</h4>
+          <div className="footer-links">
+            {berryLinks.map((b) => (
+              <Link key={b.key} href={`/shop?berry=${b.key}`}>
+                {b.label}
+              </Link>
+            ))}
+            <Link href="/shop?category=jams">Jams</Link>
+            <Link href="/shop">All Products</Link>
+          </div>
+        </div>
+
+        <div className="footer-col">
+          <h4>Learn</h4>
+          <div className="footer-links">
+            <Link href="/berries">Berries</Link>
+            <Link href="/farm">Our Farm</Link>
+            <Link href="/berry-care">Berry Care</Link>
+            <Link href="/recipes">Recipes</Link>
+            <Link href="/stories">Stories</Link>
+            <Link href="/blog">Blog</Link>
+          </div>
+        </div>
+
+        <div className="footer-col">
+          <h4>Buy &amp; Partner</h4>
+          <div className="footer-links">
+            <Link href="/how-to-buy">How to Buy</Link>
+            <Link href="/where-to-buy">Where to Buy</Link>
+            <Link href="/growers">Growers</Link>
+            <Link href="/business">Wholesale &amp; Distributors</Link>
+            <Link href="/investors">Investors</Link>
+          </div>
+        </div>
+
+        <div className="footer-col">
+          <h4>Company</h4>
+          <div className="footer-links">
+            <Link href="/about">About Us</Link>
+            <Link href="/contact">Contact Us</Link>
+            <Link href="/faq">FAQ</Link>
+            <Link href="/orders">My Orders</Link>
+            <Link href="/wishlist">Wishlist</Link>
+            <Link href="/cart">Cart</Link>
           </div>
         </div>
       </div>

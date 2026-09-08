@@ -7,7 +7,9 @@ import authRoutes from './routes/authRoutes';
 import bannerRoutes from './routes/bannerRoutes';
 import cartRoutes from './routes/cartRoutes';
 import categoryRoutes from './routes/categoryRoutes';
+import enquiryRoutes from './routes/enquiryRoutes';
 import homepageRoutes from './routes/homepageRoutes';
+import newsletterRoutes from './routes/newsletterRoutes';
 import orderRoutes from './routes/orderRoutes';
 import productRoutes from './routes/productRoutes';
 
@@ -31,6 +33,8 @@ app.use('/api/homepage', homepageRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/enquiries', enquiryRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 app.use(errorHandler);
 

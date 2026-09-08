@@ -32,7 +32,7 @@ export default function ContactPage() {
           <p>Benitto Prabu F</p>
           <p>Business Development Manager</p>
           <p>+91 74004 55538</p>
-          <p>+91 97909 65058</p>
+          <p>+91 97909 65068</p>
           <p>benitto@plantopiafarms.com</p>
         </div>
         <div

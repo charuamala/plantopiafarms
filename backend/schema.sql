@@ -31,3 +31,24 @@ CREATE TABLE products (
 CREATE INDEX idx_products_category ON products(category_key);
 CREATE INDEX idx_products_price ON products(price);
 CREATE INDEX idx_products_active ON products(is_active);
+
+-- Not dropped on migrate, unlike products/categories above, so re-running
+-- this script never wipes submitted enquiries or newsletter signups.
+CREATE TABLE IF NOT EXISTS enquiries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT,
+  company TEXT,
+  message TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_enquiries_type ON enquiries(type);

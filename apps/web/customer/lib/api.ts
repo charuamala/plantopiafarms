@@ -103,3 +103,36 @@ export async function fetchCategories(): Promise<Category[]> {
   const data = await res.json();
   return data.categories;
 }
+
+export type EnquiryType = "grower" | "business" | "investor" | "general";
+
+export type EnquiryPayload = {
+  type: EnquiryType;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  message?: string;
+};
+
+export async function submitEnquiry(payload: EnquiryPayload): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/api/enquiries`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Failed to submit enquiry");
+}
+
+export async function subscribeToNewsletter(
+  email: string,
+): Promise<{ alreadySubscribed: boolean }> {
+  const res = await fetch(`${API_BASE_URL}/api/newsletter`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) throw new Error("Failed to subscribe");
+  const data = await res.json();
+  return { alreadySubscribed: Boolean(data.alreadySubscribed) };
+}
