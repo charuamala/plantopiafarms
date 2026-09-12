@@ -1,181 +1,132 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { berryCatalog, BerryKey, socialLinks } from "../lib/berries";
-import { fetchProducts, Product } from "../lib/api";
-import { addToCart } from "../lib/cart";
 import { recipes } from "../lib/recipes";
 import { stories } from "../lib/stories";
-import { stores } from "../lib/stores";
 import Newsletter from "../src/components/Newsletter";
 
-const bannerOrder: BerryKey[] = [
-  "strawberry",
-  "blueberry",
-  "blackberry",
-  "raspberry",
+const whyBerries = [
+  { icon: "🫐", title: "Naturally Nutrient-Dense", body: "Berries are rich in vitamin C, fiber, and antioxidants — real nutrition in every bite, not added later." },
+  { icon: "🌿", title: "Low Effort, High Reward", body: "No peeling, no cooking — wash and eat. An easy way to build a healthier plate every day." },
+  { icon: "🎉", title: "A Fit for Every Occasion", body: "From breakfast bowls to festival sweets and gifting boxes, berries fit the way India already eats." },
+  { icon: "🌍", title: "Grown Close to Home", body: "Grown in Kotagiri and delivered fresh, instead of travelling halfway around the world to reach you." },
 ];
 
-const offerCards = [
-  {
-    title: "Strawberry Summer Set",
-    subtitle: "Sweet strawberry bundles for smoothies, jams, and snacks.",
-    label: "Best seller",
-    button: "Shop strawberries",
-    image: berryCatalog.strawberry.image,
-    link: "/shop?berry=strawberry",
-  },
-  {
-    title: "Blueberry Antioxidant Pack",
-    subtitle: "Deep purple blueberries for bowls, baking, and brain boosting.",
-    label: "New arrival",
-    button: "Shop blueberries",
-    image: berryCatalog.blueberry.image,
-    link: "/shop?berry=blueberry",
-  },
-  {
-    title: "Blackberry Dessert Duo",
-    subtitle: "Bold blackberries for rich desserts, cocktails, and treats.",
-    label: "Limited time",
-    button: "Shop blackberries",
-    image: berryCatalog.blackberry.image,
-    link: "/shop?berry=blackberry",
-  },
-  {
-    title: "Raspberry Refresh Set",
-    subtitle: "Tangy raspberries for bright bowls, salads, and snacks.",
-    label: "Seasonal offer",
-    button: "Shop raspberries",
-    image: berryCatalog.raspberry.image,
-    link: "/shop?berry=raspberry",
-  },
+const whyJams = [
+  { icon: "🍯", title: "Real Fruit, Not Just Sugar", body: "Made from our own farm berries in small batches — fruit first, sugar second." },
+  { icon: "📦", title: "Berries, All Year Round", body: "Jam captures the harvest at its peak, so you can enjoy berry flavour long after the season ends." },
+  { icon: "🎁", title: "Ready to Gift", body: "A jar of handcrafted jam travels well and feels personal — a natural gifting choice for festivals and celebrations." },
+  { icon: "🍞", title: "Everyday Versatility", body: "Toast, parathas, desserts, or a spoonful on its own — jam earns its place in the pantry." },
 ];
 
-const whyCards = [
-  { icon: "🌱", title: "Freshness", body: "Harvested early, cooled fast, and moved through a short cold chain." },
-  { icon: "✅", title: "Quality", body: "Every berry hand-checked before it's packed for delivery." },
-  { icon: "🚜", title: "Farm Care", body: "Grown with minimal synthetic inputs on our own farm in Kotagiri." },
-  { icon: "🤝", title: "Trusted Sourcing", body: "Direct from farm to you, with no long, unclear supply chain." },
+const growerReasons = [
+  { title: "Commercial Growing", body: "For farmers looking to add a high-value crop, berries offer strong returns on relatively small plots of land." },
+  { title: "Hobby & Rooftop Growing", body: "You don't need acres to start — many berry varieties grow well in containers, balconies, and rooftop setups." },
+  { title: "Guidance, Not Just Seeds", body: "We share what we've learned growing in Kotagiri's conditions, so new growers don't have to start from zero." },
 ];
 
 export default function HomePage() {
-  const [activeSlide, setActiveSlide] = useState(0);
   const [selectedBerry, setSelectedBerry] = useState<BerryKey | null>(null);
-  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % bannerOrder.length);
-    }, 4200);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const activeBerry = bannerOrder[activeSlide];
-  const slideInfo = berryCatalog[activeBerry];
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchProducts({ category: activeBerry, sort: "featured", limit: 1 })
-      .then((result) => {
-        if (!cancelled) setFeaturedProduct(result.products[0] ?? null);
-      })
-      .catch(() => {
-        if (!cancelled) setFeaturedProduct(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [activeBerry]);
-
-  const handleQuickAdd = () => {
-    if (featuredProduct) addToCart(featuredProduct.id, 1);
-  };
 
   return (
     <main className="page-shell">
-      {/* Hero — existing approved banner, unchanged */}
+      {/* Hero — bold brand statement, no pricing/cart */}
       <section
-        className="hero"
+        className="hero hero-single"
         style={{
-          backgroundImage: `linear-gradient(135deg, rgba(7, 30, 18, 0.55), rgba(14, 62, 32, 0.18)), url(${slideInfo.image})`,
+          backgroundImage:
+            "linear-gradient(135deg, rgba(7, 30, 18, 0.6), rgba(14, 62, 32, 0.25)), url(/images/farm-strawberry-field.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="hero-content">
-          <p className="eyebrow">Fresh from our farm</p>
-          <h1>Premium berries delivered to your table.</h1>
+        <div className="hero-content hero-content-wide">
+          <p className="eyebrow">Goodness Grows Here</p>
+          <h1>Bringing premium berries to India, grown with care.</h1>
           <p>
-            Natural sweetness, farm-fresh quality, and healthy berry goodness
-            for every day.
+            Plantopia Farms is on a mission to help India discover fresh
+            berries — as a healthier everyday habit, a farming opportunity,
+            and a crop worth investing in.
           </p>
           <div className="cta-row">
-            <button type="button" onClick={() => router.push("/shop")}>
-              Shop Now
+            <button type="button" onClick={() => router.push("/about")}>
+              Our Story
             </button>
             <button
               type="button"
               className="secondary"
-              onClick={() => router.push("/about")}
+              onClick={() => router.push("/berries")}
             >
-              Learn More
+              Explore Berries
             </button>
           </div>
-        </div>
-
-        <div className="hero-card">
-          <div className="berry-badge">Featured</div>
-          <h3>{featuredProduct?.name ?? slideInfo.name}</h3>
-          <p>{featuredProduct?.shortDescription ?? slideInfo.short}</p>
-          <strong>
-            {featuredProduct
-              ? `₹${featuredProduct.salePrice ?? featuredProduct.price} / ${featuredProduct.weight}`
-              : slideInfo.price}
-          </strong>
-          <div className="hero-card-actions">
-            <button
-              type="button"
-              className="cta-button"
-              onClick={() => setSelectedBerry(activeBerry)}
-            >
-              Quick view
-            </button>
-            {featuredProduct && (
-              <button type="button" className="secondary" onClick={handleQuickAdd}>
-                Add to cart
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="hero-dots" aria-label="banner slider dots">
-          {bannerOrder.map((berry, index) => (
-            <button
-              key={berry}
-              type="button"
-              className={index === activeSlide ? "dot active" : "dot"}
-              onClick={() => setActiveSlide(index)}
-              aria-label={`Go to ${berry}`}
-            />
-          ))}
         </div>
       </section>
 
-      {/* Discover Plantopia Berries */}
+      {/* Our Story — what inspired us, where & how we grow */}
       <section className="section-intro">
         <div>
-          <h2>Discover Plantopia Berries</h2>
+          <h2>Our Story</h2>
           <p>
-            Fresh, wholesome berries grown with care in Kotagiri — naturally
-            sweet, carefully harvested, and delivered close to peak
-            ripeness. Berries come first here; shopping is just the last
-            step.
+            [Placeholder — replace with your real founding story: what
+            inspired growing berries in India, and why Kotagiri.] Berries
+            are barely grown in India today, despite ideal conditions in
+            our highlands. We started Plantopia Farms to change that —
+            bringing a crop we believe in to the people we believe will
+            love it.
           </p>
         </div>
       </section>
 
-      {/* Berry varieties */}
+      <section className="farm-story">
+        <div className="farm-story-content">
+          <h2>Where &amp; How We Grow</h2>
+          <p>
+            Our farm sits in the cool highlands of Kotagiri, a climate
+            naturally suited to berries. We grow with sustainable
+            practices — minimal synthetic inputs, careful soil health, and
+            hands-on care through every stage of the season.
+          </p>
+          <button type="button" className="secondary" onClick={() => router.push("/farm")}>
+            See Our Farm
+          </button>
+        </div>
+        <div className="farm-story-image" style={{ backgroundImage: "url(/images/farm-growing-care.jpg)" }} />
+      </section>
+
+      <section className="vision-statement">
+        <p className="vision-eyebrow">Our Vision</p>
+        <h2>A future where fresh berries are simply part of how India eats.</h2>
+      </section>
+
+      {/* Why Berries */}
+      <section className="section-intro">
+        <div>
+          <h2>Why Berries</h2>
+          <p>Small fruit, real benefits — here's why berries belong in your everyday diet.</p>
+        </div>
+      </section>
+
+      <section className="why-grid">
+        {whyBerries.map((card) => (
+          <div key={card.title} className="why-card">
+            <div className="why-icon">{card.icon}</div>
+            <h3>{card.title}</h3>
+            <p>{card.body}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Kinds of berries — informational, no shop/cart */}
+      <section className="section-intro">
+        <div>
+          <h2>Berries We Grow</h2>
+          <p>Strawberries, blueberries, blackberries, and raspberries — each with its own character.</p>
+        </div>
+      </section>
+
       <section className="category-grid">
         {Object.entries(berryCatalog).map(([key, berry]) => (
           <div
@@ -194,41 +145,25 @@ export default function HomePage() {
               <button
                 type="button"
                 className="secondary"
-                onClick={() => router.push(`/shop?berry=${key}`)}
+                onClick={() => router.push(`/berry/${key}`)}
               >
-                Shop now
+                Learn more
               </button>
             </div>
           </div>
         ))}
       </section>
 
-      {/* How to Buy preview */}
-      <section className="farm-story">
-        <div className="farm-story-content">
-          <h2>How to Buy Plantopia Berries</h2>
-          <p>
-            Order online for home delivery, find us at a store near you, or
-            reach out for wholesale quantities — see the full guide for every
-            option, step by step.
-          </p>
-          <button type="button" className="secondary" onClick={() => router.push("/how-to-buy")}>
-            How to Buy
-          </button>
-        </div>
-        <div className="farm-story-image" style={{ backgroundImage: "url(/images/farm-harvest.jpg)" }} />
-      </section>
-
-      {/* Why Plantopia + farm story */}
+      {/* Why Jams */}
       <section className="section-intro">
         <div>
-          <h2>Why Plantopia</h2>
-          <p>Grown on our sustainable farm in Kotagiri, harvested at peak ripeness and delivered within 24 hours.</p>
+          <h2>Why Our Jams</h2>
+          <p>The same farm berries, made to last — real fruit, small batches, no shortcuts.</p>
         </div>
       </section>
 
       <section className="why-grid">
-        {whyCards.map((card) => (
+        {whyJams.map((card) => (
           <div key={card.title} className="why-card">
             <div className="why-icon">{card.icon}</div>
             <h3>{card.title}</h3>
@@ -237,53 +172,14 @@ export default function HomePage() {
         ))}
       </section>
 
-      <section className="farm-story">
-        <div className="farm-story-content">
-          <h2>How to Enjoy Fresh Berries</h2>
-          <p>
-            A little care after delivery keeps berries sweet and firm for
-            longer — how to wash, store, refrigerate, and freeze them
-            properly.
-          </p>
-          <button type="button" className="secondary" onClick={() => router.push("/berry-care")}>
-            Berry Care Guide
-          </button>
-        </div>
-        <div className="farm-story-image" style={{ backgroundImage: "url(/images/farm-growing-care.jpg)" }} />
-      </section>
-
-      {/* Featured products */}
+      {/* How to use berries: recipes, festivals, gifts */}
       <section className="section-intro">
         <div>
-          <h2>Featured Products</h2>
+          <h2>How to Enjoy Berries</h2>
           <p>
-            Discover our fresh strawberry, blueberry, blackberry, and
-            raspberry packs, with product detail pages and easy checkout.
+            Indian-inspired recipes, festival-season sweets, and gifting
+            ideas that put fresh berries at the center.
           </p>
-        </div>
-      </section>
-
-      <section className="offer-grid">
-        {offerCards.map((offer) => (
-          <div key={offer.title} className="offer-card">
-            <div className="offer-image" style={{ backgroundImage: `url(${offer.image})` }} />
-            <div className="offer-copy">
-              <span className="offer-chip">{offer.label}</span>
-              <h2>{offer.title}</h2>
-              <p>{offer.subtitle}</p>
-              <button type="button" onClick={() => router.push(offer.link)}>
-                {offer.button}
-              </button>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* Recipes preview */}
-      <section className="section-intro">
-        <div>
-          <h2>Berry Recipes</h2>
-          <p>Indian-inspired recipes that put fresh berries at the center.</p>
         </div>
       </section>
 
@@ -301,6 +197,28 @@ export default function HomePage() {
       <div className="home-preview-more">
         <Link href="/recipes">See all recipes →</Link>
       </div>
+
+      {/* Easy purchasing — informational only, no cart widgets on homepage */}
+      <section className="farm-story">
+        <div className="farm-story-content">
+          <h2>Easy to Order, However You Shop</h2>
+          <p>
+            Order online in a few clicks for home delivery, or pick up
+            Plantopia berries and jams at a store near you.
+          </p>
+          <div className="cta-row">
+            <button type="button" onClick={() => router.push("/how-to-buy")}>
+              How to Buy
+            </button>
+            <button type="button" className="secondary" onClick={() => router.push("/where-to-buy")}>
+              Find a Store
+            </button>
+          </div>
+        </div>
+        <div className="farm-story-image" style={{ backgroundImage: "url(/images/farm-harvest.jpg)" }} />
+      </section>
+
+      <Newsletter />
 
       {/* Stories preview */}
       <section className="section-intro">
@@ -325,11 +243,45 @@ export default function HomePage() {
         <Link href="/stories">See all stories →</Link>
       </div>
 
+      {/* Grow with us */}
+      <section className="section-intro">
+        <div>
+          <h2>Why Grow Berries?</h2>
+          <p>Commercial farmer or rooftop hobbyist — there's a place to start.</p>
+        </div>
+      </section>
+
+      <section className="biz-sections">
+        {growerReasons.map((reason) => (
+          <div key={reason.title} className="biz-section-card">
+            <h3>{reason.title}</h3>
+            <p>{reason.body}</p>
+          </div>
+        ))}
+      </section>
+
+      <div className="home-preview-more">
+        <Link href="/growers">Learn about growing with Plantopia →</Link>
+      </div>
+
+      {/* Bold vision & scale statement */}
+      <section className="scale-statement">
+        <p className="scale-eyebrow">Our Vision &amp; Scale</p>
+        <h2>Building India&apos;s berry category — from one farm to a national habit.</h2>
+        <p className="scale-note">
+          [Placeholder — replace with your real scale ambitions and
+          milestones once approved for public sharing.]
+        </p>
+        <Link href="/investors" className="scale-cta">
+          For Investors →
+        </Link>
+      </section>
+
       {/* Business strip */}
       <section className="business-strip">
         <div>
-          <h2>Growing, Wholesale &amp; Investment</h2>
-          <p>Beyond retail — partner with Plantopia as a grower, business, or investor.</p>
+          <h2>Partner With Plantopia</h2>
+          <p>Growers, wholesale buyers, and investors — every partnership starts with a conversation.</p>
         </div>
         <div className="business-strip-links">
           <Link href="/growers" className="secondary">Growers</Link>
@@ -338,26 +290,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Newsletter />
-
-      {/* Where to buy */}
+      {/* Reach us */}
       <section className="section-intro">
         <div>
-          <h2>Where to Buy</h2>
-          <p>Find Plantopia berries at a store near you.</p>
+          <h2>Get in Touch</h2>
+          <p>Questions, partnerships, or just want to say hello — we'd love to hear from you.</p>
         </div>
       </section>
 
-      <section className="home-store-grid">
-        {stores.slice(0, 3).map((store) => (
-          <div key={store.name} className="home-store-card">
-            <h3>{store.name}</h3>
-            <p>{store.city}</p>
-          </div>
-        ))}
-      </section>
       <div className="home-preview-more">
-        <Link href="/where-to-buy">View all stores →</Link>
+        <Link href="/contact">Contact Us →</Link>
       </div>
 
       <section className="share-row">
@@ -386,16 +328,15 @@ export default function HomePage() {
                 ))}
               </ul>
               <div className="modal-actions">
-                <strong>{berryCatalog[selectedBerry].price}</strong>
                 <button
                   type="button"
                   className="secondary"
                   onClick={() => {
-                    router.push(`/shop?berry=${selectedBerry}`);
+                    router.push(`/berry/${selectedBerry}`);
                     setSelectedBerry(null);
                   }}
                 >
-                  Shop {berryCatalog[selectedBerry].name.toLowerCase()}
+                  Learn more about {berryCatalog[selectedBerry].name.toLowerCase()}
                 </button>
               </div>
             </div>
