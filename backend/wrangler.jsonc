@@ -22,11 +22,11 @@
       "database_name": "plantopia-db",
       "database_id": "f624c384-7341-468f-9417-93b71548226d"
     }
-  ],
-  "routes": [
-    {
-      "pattern": "api.plantopiaforms.com",
-      "custom_domain": true
-    }
   ]
+  // Site taken offline (requested 2026-10-12): the custom domain route
+  // was removed here so `wrangler deploy` detaches api.plantopiaforms.com
+  // from this Worker. To bring it back, restore this block and redeploy:
+  // "routes": [
+  //   { "pattern": "api.plantopiaforms.com", "custom_domain": true }
+  // ]
 }
