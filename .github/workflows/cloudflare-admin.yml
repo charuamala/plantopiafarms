@@ -1,0 +1,54 @@
+name: Cloudflare Admin (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "list-pages-domains | remove-pages-domain"
+        required: true
+        default: list-pages-domains
+        type: choice
+        options:
+          - list-pages-domains
+          - remove-pages-domain
+      project:
+        description: "Pages project name (required for remove-pages-domain)"
+        required: false
+      domain:
+        description: "Domain to remove (required for remove-pages-domain)"
+        required: false
+
+jobs:
+  admin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List Pages projects and their custom domains
+        if: ${{ github.event.inputs.action == 'list-pages-domains' }}
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -e
+          for PROJECT in plantopiafarms-customer plantopiafarms-admin; do
+            echo "=== $PROJECT ==="
+            curl -s -X GET \
+              "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/pages/projects/${PROJECT}/domains" \
+              -H "Authorization: Bearer ${CF_TOKEN}" \
+              -H "Content-Type: application/json" | jq '.result[] | {name, status}'
+          done
+
+      - name: Remove one Pages custom domain
+        if: ${{ github.event.inputs.action == 'remove-pages-domain' }}
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -e
+          if [ -z "${{ github.event.inputs.project }}" ] || [ -z "${{ github.event.inputs.domain }}" ]; then
+            echo "Both 'project' and 'domain' inputs are required for remove-pages-domain." >&2
+            exit 1
+          fi
+          curl -s -X DELETE \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/pages/projects/${{ github.event.inputs.project }}/domains/${{ github.event.inputs.domain }}" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json" | jq .
