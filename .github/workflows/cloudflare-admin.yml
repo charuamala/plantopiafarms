@@ -48,8 +48,11 @@ jobs:
             -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" | jq -r '.result[0].id')
           echo "zone_id=$ZONE_ID"
           curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?per_page=100" \
-            -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" \
-            | jq '.result[] | {type, name, content, proxied}'
+            -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" > /tmp/dns.json
+          cat /tmp/dns.json | jq .
+          echo "--- token verify (shows what this token can actually do) ---"
+          curl -s -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" | jq .
 
       - name: Remove one Pages custom domain
         if: ${{ github.event.inputs.action == 'remove-pages-domain' }}
