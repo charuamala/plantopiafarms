@@ -4,12 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "list-pages-domains | remove-pages-domain"
+        description: "list-pages-domains | list-dns | remove-pages-domain"
         required: true
         default: list-pages-domains
         type: choice
         options:
           - list-pages-domains
+          - list-dns
           - remove-pages-domain
       project:
         description: "Pages project name (required for remove-pages-domain)"
@@ -36,6 +37,19 @@ jobs:
               -H "Authorization: Bearer ${CF_TOKEN}" \
               -H "Content-Type: application/json" | jq '.result[] | {name, status}'
           done
+
+      - name: List DNS records for plantopiaforms.com
+        if: ${{ github.event.inputs.action == 'list-dns' }}
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -e
+          ZONE_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=plantopiaforms.com" \
+            -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" | jq -r '.result[0].id')
+          echo "zone_id=$ZONE_ID"
+          curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?per_page=100" \
+            -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" \
+            | jq '.result[] | {type, name, content, proxied}'
 
       - name: Remove one Pages custom domain
         if: ${{ github.event.inputs.action == 'remove-pages-domain' }}
